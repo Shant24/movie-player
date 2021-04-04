@@ -1,0 +1,75 @@
+{
+  "name": "movie-player",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Shant Sargsyan <shant.asf@gmail.com>",
+  "description": "This is Movie Player",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shant24/movie-player.git"
+  },
+  "homepage": "https://github.com/Shant24/movie-player#readme",
+  "bugs": {
+    "url": "https://github.com/Shant24/movie-player/issues"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/react-fontawesome": "^0.1.14",
+    "@testing-library/jest-dom": "^5.11.10",
+    "@testing-library/react": "^11.2.6",
+    "@testing-library/user-event": "^13.1.1",
+    "@types/jest": "^26.0.22",
+    "@types/node": "^14.14.37",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-player": "^2.9.0",
+    "react-scripts": "4.0.3",
+    "react-select": "^4.3.0",
+    "styled-components": "^5.2.3",
+    "web-vitals": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.22",
+    "@types/node": "^14.14.37",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
+    "@types/react-select": "^4.0.14",
+    "@types/styled-components": "^5.1.9",
+    "sass": "^1.32.8",
+    "typescript": "^4.2.3"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "keywords": [
+    "movie",
+    "player",
+    "film",
+    "app",
+    "link"
+  ],
+  "license": "ISC"
+}
