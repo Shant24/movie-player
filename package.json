@@ -8,10 +8,6 @@
     "type": "git",
     "url": "git+https://github.com/Shant24/movie-player.git"
   },
-  "homepage": "https://github.com/Shant24/movie-player#readme",
-  "bugs": {
-    "url": "https://github.com/Shant24/movie-player/issues"
-  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
