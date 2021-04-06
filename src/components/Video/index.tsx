@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, MutableRefObject } from 'react';
 import ReactPlayer from 'react-player';
 import styled from 'styled-components/macro';
 
@@ -11,7 +11,9 @@ const VideoContainer = styled.div`
 `;
 
 interface VideoProps {
+  reference: MutableRefObject<null>;
   src: string;
+  isPip: boolean;
   volume: number;
   isPlaying: boolean;
   setDuration: (duration: number) => void;
@@ -19,7 +21,9 @@ interface VideoProps {
 }
 
 const Video: React.FC<VideoProps> = ({
+  reference,
   src,
+  isPip,
   volume,
   isPlaying,
   setDuration,
@@ -28,14 +32,16 @@ const Video: React.FC<VideoProps> = ({
   return (
     <VideoContainer>
       <ReactPlayer
+        ref={reference}
         width="100%"
         height="100%"
         url={src}
+        pip={isPip}
         loop={true}
-        // controls={true}s
         volume={volume}
         playing={isPlaying}
-        progressInterval={200}
+        progressInterval={500}
+        onError={(e) => console.log('onError', e)}
         onDuration={(duration: number) => setDuration(duration)}
         onProgress={(progress: IProgress) => setProgress(progress)}
       />
@@ -43,4 +49,4 @@ const Video: React.FC<VideoProps> = ({
   );
 };
 
-export default Video;
+export default memo(Video);
