@@ -2,6 +2,7 @@ import { IQuality } from '../types/player';
 
 const mp4UrlRegExp = /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?(.mp4)$/;
 const lastSashRegExp = /[^/]+$/;
+// eslint-disable-next-line
 const youTubeUrlRegExp = /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?/;
 
 export const checkLink = (link: string) => {
