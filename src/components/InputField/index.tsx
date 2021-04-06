@@ -16,20 +16,29 @@ const qualityOptions: IQuality[] = [
 
 const InputFieldContainer = styled.div``;
 
-const Form = styled.form`
+type FormProps = {
+  isShowSelector: boolean;
+};
+
+const Form = styled.form<FormProps>`
   margin: 20px auto 0;
-  max-width: 1000px;
+  max-width: 640px;
   display: grid;
-  grid-template: 'input quality button' / 1fr 110px 100px;
+  grid-template: ${({ isShowSelector }) =>
+    isShowSelector
+      ? "'input quality button' / 1fr 110px 100px"
+      : "'input button' / 1fr 100px"};
 
   @media (max-width: 1280px) {
   }
 
   @media (max-width: 768px) {
-    grid-template:
-      'input input' 50px
-      'quality button'
-      / 3fr 1.5fr;
+    grid-template: ${({ isShowSelector }) =>
+      isShowSelector
+        ? `'input input' 50px
+        'quality button'
+        / 3fr 1.5fr`
+        : `'input button' / 1fr 100px`};
   }
 `;
 
@@ -168,7 +177,7 @@ interface InputFieldProps {
 
 const InputField: React.FC<InputFieldProps> = ({ setVideoLink }) => {
   const [link, setLink] = useState<string>(
-    'https://nickel.cloud.cdnland.in/movies/6313dba955fd4f750105d2fbbc521c4a4cbf91bc/8be8e2f68723b23ee633f2820c85dd88:2021040514/480.mp4',
+    'https://nickel.cloud.cdnland.in/movies/6313dba955fd4f750105d2fbbc521c4a4cbf91bc/12c7af0b2a873e4d677c8417731c73d9:2021040619/1080.mp4',
   );
   const [quality, setQuality] = useState<IQuality | null>(
     qualityOptions[qualityOptions.length - 1],
@@ -205,19 +214,21 @@ const InputField: React.FC<InputFieldProps> = ({ setVideoLink }) => {
 
   return (
     <InputFieldContainer>
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} isShowSelector={!isDisabled}>
         <Input type="text" value={link} onChange={handleChange} />
 
-        <SelectWrapper>
-          <Select
-            className="qualitySelector"
-            classNamePrefix="qualitySelector"
-            value={quality}
-            onChange={handleChangeQuality}
-            options={qualityOptions}
-            isSearchable={false}
-          />
-        </SelectWrapper>
+        {!isDisabled && (
+          <SelectWrapper>
+            <Select
+              className="qualitySelector"
+              classNamePrefix="qualitySelector"
+              value={quality}
+              onChange={handleChangeQuality}
+              options={qualityOptions}
+              isSearchable={false}
+            />
+          </SelectWrapper>
+        )}
 
         <SubmitButton
           type="submit"

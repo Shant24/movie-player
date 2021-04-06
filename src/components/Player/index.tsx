@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useRef, useState } from 'react';
 import styled from 'styled-components/macro';
 
 import { IProgress } from '../../types/player';
@@ -8,9 +8,12 @@ import VideoControllers from '../VideoControllers';
 const PlayerContainer = styled.div`
   margin: 50px auto 0;
   max-width: 640px;
-  /* max-height: calc(100% - 189px); */
   position: relative;
   background-color: black;
+
+  @media (max-width: 768px) {
+    margin: 20px auto 0;
+  }
 `;
 
 interface PlayerProps {
@@ -19,6 +22,7 @@ interface PlayerProps {
 
 const Player: React.FC<PlayerProps> = ({ src }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isPip, setIsPip] = useState<boolean>(false);
   const [progress, setProgress] = useState<IProgress>({
     playedSeconds: 0,
     played: 0,
@@ -27,11 +31,14 @@ const Player: React.FC<PlayerProps> = ({ src }) => {
   });
   const [duration, setDuration] = useState<number>(0);
   const [volume, setVolume] = useState<number>(1);
+  const VideoRef = useRef(null);
 
   return (
     <PlayerContainer>
       <Video
+        reference={VideoRef}
         src={src}
+        isPip={isPip}
         volume={volume}
         isPlaying={isPlaying}
         setDuration={setDuration}
@@ -39,12 +46,14 @@ const Player: React.FC<PlayerProps> = ({ src }) => {
       />
 
       <VideoControllers
+        reference={VideoRef}
         duration={duration}
         progress={progress}
         volume={volume}
         isPlaying={isPlaying}
-        setIsPlaying={setIsPlaying}
+        setPlaying={() => setIsPlaying(!isPlaying)}
         setVolume={setVolume}
+        setPip={() => setIsPip(!isPip)}
       />
     </PlayerContainer>
   );
