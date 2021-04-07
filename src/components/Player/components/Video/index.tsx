@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import styled from 'styled-components/macro';
 import ReactPlayer from 'react-player';
 
-import { IProgress } from '../../types/player';
+import { IProgress } from '../../../../types/player';
 
 const VideoContainer = styled.div`
   width: 100%;

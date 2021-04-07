@@ -15,12 +15,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import Progress from '../Progress';
-import { IProgress } from '../../types/player';
-import { formatTime } from '../../helpers/timeHelper';
+import { IProgress } from '../../../../types/player';
+import { formatTime } from '../../../../helpers/timeHelper';
 import {
   getFullModeValue,
   toggleFullScreen,
-} from '../../helpers/fullScreenHelper';
+} from '../../../../helpers/fullScreenHelper';
 
 const VideoControllersContainer = styled.div`
   position: absolute;
@@ -31,7 +31,7 @@ const VideoControllersContainer = styled.div`
 `;
 
 const HoveringStyle = styled.div`
-  opacity: 0;
+  opacity: 1;
   transition: all 0.4s ease-in-out;
 
   ${VideoControllersContainer}:hover & {
@@ -264,7 +264,7 @@ const VideoControllers: React.FC<VideoControllersProps> = (props) => {
             duration={duration}
             currentProgress={progress.played}
             loadedProgress={progress.loaded}
-            handleChangeVolume={handleChangeProgress}
+            handleChangeProgress={handleChangeProgress}
           />
         </ProgressWrapper>
 
@@ -284,7 +284,7 @@ const VideoControllers: React.FC<VideoControllersProps> = (props) => {
           <Progress
             type="volume"
             currentProgress={volume}
-            handleChangeVolume={handleChangeVolume}
+            handleChangeProgress={handleChangeVolume}
           />
         </VolumeProgressWrapper>
 
