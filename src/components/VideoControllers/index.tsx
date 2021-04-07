@@ -1,5 +1,6 @@
-import React, { memo, MutableRefObject, useEffect, useState } from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components/macro';
+import ReactPlayer from 'react-player';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faClone,
@@ -10,11 +11,16 @@ import {
   faVolumeUp,
   faVolumeDown,
   faVolumeMute,
+  faTimes,
 } from '@fortawesome/free-solid-svg-icons';
 
+import Progress from '../Progress';
 import { IProgress } from '../../types/player';
 import { formatTime } from '../../helpers/timeHelper';
-import Progress from '../Progress';
+import {
+  getFullModeValue,
+  toggleFullScreen,
+} from '../../helpers/fullScreenHelper';
 
 const VideoControllersContainer = styled.div`
   position: absolute;
@@ -24,7 +30,16 @@ const VideoControllersContainer = styled.div`
   left: 0;
 `;
 
-const PlayPauseButtonsContainer = styled.div`
+const HoveringStyle = styled.div`
+  opacity: 0;
+  transition: all 0.4s ease-in-out;
+
+  ${VideoControllersContainer}:hover & {
+    opacity: 1;
+  }
+`;
+
+const PlayPauseButtonsContainer = styled(HoveringStyle)`
   width: 70px;
   height: 70px;
   position: absolute;
@@ -39,19 +54,19 @@ const PlayPauseButtonsContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.4);
   border-radius: 50%;
   cursor: pointer;
-  opacity: 0;
-  transition: all 0.4s ease-in-out;
-
-  ${VideoControllersContainer}:hover & {
-    opacity: 1;
-  }
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.2);
   }
+
+  @media (max-width: 500px) {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
 `;
 
-const ProgressBarContainer = styled.div`
+const ProgressBarContainer = styled(HoveringStyle)`
   width: 100%;
   height: 50px;
   position: absolute;
@@ -60,6 +75,10 @@ const ProgressBarContainer = styled.div`
   display: flex;
   align-items: center;
   color: white;
+
+  @media (max-width: 500px) {
+    height: 40px;
+  }
 `;
 
 const PlayBtnControllerContainer = styled.div`
@@ -79,8 +98,18 @@ const PlayBtnControllerContainer = styled.div`
     background-color: rgba(255, 255, 255, 0.2);
   }
 
+  @media (max-width: 500px) {
+    min-width: 30px;
+    width: 30px;
+    height: 30px;
+  }
+
   svg {
     font-size: 20px;
+
+    @media (max-width: 500px) {
+      font-size: 15px;
+    }
   }
 `;
 
@@ -88,11 +117,20 @@ const CurrentTime = styled.div`
   margin: 0 5px;
   user-select: none;
   cursor: default;
+  min-width: 62px;
+  display: flex;
+  justify-content: center;
+
+  @media (max-width: 500px) {
+    margin: 0;
+    font-size: 12px;
+    min-width: 45px;
+  }
 `;
 
 const Deadline = styled(CurrentTime)``;
 
-const PipContainer = styled.div`
+const PipContainer = styled(HoveringStyle)`
   width: 40px;
   height: 40px;
   position: absolute;
@@ -109,10 +147,6 @@ const PipContainer = styled.div`
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.2);
-
-    /* svg {
-      color: rgba(255, 255, 255, 0.5);
-    } */
   }
 
   svg {
@@ -123,33 +157,59 @@ const PipContainer = styled.div`
 
 const VolumeIconsContainer = styled(PlayBtnControllerContainer)``;
 
+const Wrapper = styled.div`
+  padding: 0 5px;
+`;
+
+const ProgressWrapper = styled(Wrapper)`
+  width: 100%;
+
+  @media (max-width: 500px) {
+    width: 55%;
+  }
+`;
+
+const VolumeProgressWrapper = styled(Wrapper)`
+  max-width: 200px;
+  width: 40%;
+
+  @media (max-width: 500px) {
+    width: 45%;
+  }
+`;
+
 const FullScreenContainer = styled(PlayBtnControllerContainer)`
   margin: 0 5px;
 `;
 
 type VideoControllersProps = {
-  reference: MutableRefObject<null>;
+  refVideo: React.RefObject<ReactPlayer> | undefined;
   duration: number;
   progress: IProgress;
   volume: number;
+  isPip: boolean;
+  isMuted: boolean;
   isPlaying: boolean;
   setPlaying: () => void;
   setVolume: (volume: number) => void;
   setPip: () => void;
+  setIsMuted: (isMuted: boolean) => void;
 };
 
-const VideoControllers: React.FC<VideoControllersProps> = ({
-  reference,
-  duration,
-  progress,
-  volume,
-  isPlaying,
-  setPlaying,
-  setVolume,
-  setPip,
-}) => {
-  const [propsVolume, setPropsVolume] = useState<number>(volume);
-  const [isMuted, setIsMuted] = useState<boolean>(false);
+const VideoControllers: React.FC<VideoControllersProps> = (props) => {
+  const {
+    refVideo,
+    duration,
+    progress,
+    volume,
+    isPip,
+    isMuted,
+    isPlaying,
+    setPlaying,
+    setVolume,
+    setPip,
+    setIsMuted,
+  } = props;
 
   const onPip = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -157,32 +217,28 @@ const VideoControllers: React.FC<VideoControllersProps> = ({
   };
 
   const handleChangeProgress = (changedProgress: number) => {
-    if (reference) {
-      if (reference.current) {
-        // @ts-ignore
-        reference?.current?.seekTo(changedProgress, 'fraction');
-      }
-    }
+    refVideo?.current?.seekTo(changedProgress, 'fraction');
   };
 
-  useEffect(() => {
-    volume && setIsMuted(false);
-  }, [volume]);
-
-  const handleMute = () => {
-    isMuted ? setVolume(propsVolume) : setVolume(0);
-    setIsMuted(!isMuted);
+  const handlePlayPause = () => {
+    setPlaying();
   };
 
-  const handleChangeVolume = (progress: number) => {
-    setVolume(progress);
-    setPropsVolume(progress);
-  };
+  const handleMute = () => setIsMuted(!isMuted);
+
+  const handleChangeVolume = (progress: number) => setVolume(progress);
 
   return (
-    <VideoControllersContainer onClick={setPlaying}>
+    <VideoControllersContainer
+      onClick={handlePlayPause}
+      onDoubleClick={toggleFullScreen}
+    >
       <PipContainer onClick={onPip}>
-        <FontAwesomeIcon icon={faClone} />
+        {isPip ? (
+          <FontAwesomeIcon icon={faTimes} />
+        ) : (
+          <FontAwesomeIcon icon={faClone} />
+        )}
       </PipContainer>
 
       {!isPlaying && (
@@ -192,7 +248,7 @@ const VideoControllers: React.FC<VideoControllersProps> = ({
       )}
 
       <ProgressBarContainer onClick={(e) => e.stopPropagation()}>
-        <PlayBtnControllerContainer onClick={setPlaying}>
+        <PlayBtnControllerContainer onClick={handlePlayPause}>
           {isPlaying ? (
             <FontAwesomeIcon icon={faPause} />
           ) : (
@@ -202,13 +258,15 @@ const VideoControllers: React.FC<VideoControllersProps> = ({
 
         <CurrentTime>{formatTime(progress.playedSeconds)}</CurrentTime>
 
-        <Progress
-          type="progress"
-          duration={duration}
-          currentProgress={progress.played}
-          loadedProgress={progress.loaded}
-          onClick={handleChangeProgress}
-        />
+        <ProgressWrapper>
+          <Progress
+            type="progress"
+            duration={duration}
+            currentProgress={progress.played}
+            loadedProgress={progress.loaded}
+            handleChangeVolume={handleChangeProgress}
+          />
+        </ProgressWrapper>
 
         <Deadline>{formatTime(duration)}</Deadline>
 
@@ -222,18 +280,19 @@ const VideoControllers: React.FC<VideoControllersProps> = ({
           {(volume === 0 || isMuted) && <FontAwesomeIcon icon={faVolumeMute} />}
         </VolumeIconsContainer>
 
-        <Progress
-          type="volume"
-          width="40%"
-          currentProgress={propsVolume}
-          onClick={handleChangeVolume}
-        />
+        <VolumeProgressWrapper>
+          <Progress
+            type="volume"
+            currentProgress={volume}
+            handleChangeVolume={handleChangeVolume}
+          />
+        </VolumeProgressWrapper>
 
-        <FullScreenContainer onClick={() => {}}>
-          {true ? (
-            <FontAwesomeIcon icon={faExpandArrowsAlt} />
-          ) : (
+        <FullScreenContainer onClick={toggleFullScreen}>
+          {getFullModeValue() ? (
             <FontAwesomeIcon icon={faCompressArrowsAlt} />
+          ) : (
+            <FontAwesomeIcon icon={faExpandArrowsAlt} />
           )}
         </FullScreenContainer>
       </ProgressBarContainer>

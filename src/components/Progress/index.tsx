@@ -3,16 +3,8 @@ import styled from 'styled-components/macro';
 import { COLORS } from '../../assets/styles/GlobalStyles';
 import { formatTime } from '../../helpers/timeHelper';
 
-type ProgressContainerProps = {
-  value: string;
-};
-
-const ProgressContainer = styled.div.attrs(
-  ({ value }: ProgressContainerProps) => ({
-    style: { width: value },
-  }),
-)<ProgressContainerProps>`
-  margin: 0 5px;
+const ProgressContainer = styled.div`
+  width: 100%;
   height: 10px;
   position: relative;
   border-radius: 5px;
@@ -59,37 +51,48 @@ const ProgressShower = styled.div.attrs(({ value }: ProgressShowProps) => ({
     transform: translateX(-50%);
     clip-path: polygon(100% 0, 0 0, 50% 100%);
     background-color: ${COLORS.primarySemiDark};
+    user-select: none;
+    pointer-events: none;
   }
 `;
 
 type ProgressProps = {
   type: 'progress' | 'volume';
-  width?: string;
   duration?: number;
   currentProgress: number;
   loadedProgress?: number;
-  onClick: (changedProgress: number) => void;
+  handleChangeVolume: (changedProgress: number) => void;
 };
 
 const Progress: React.FC<ProgressProps> = ({
   type,
-  width = '100%',
   duration,
   currentProgress,
   loadedProgress,
-  onClick,
+  handleChangeVolume,
 }) => {
+  const [isChanging, setIsChanging] = useState<boolean>(false);
   const [hoveredProgress, setHoveredProgress] = useState<number>(0);
   const [isShowHoveredProgress, setIsShowHoveredProgress] = useState<boolean>(
     false,
   );
 
-  const handleClick = () => onClick(hoveredProgress);
+  const handleChange = (
+    _?: React.MouseEvent<HTMLDivElement>,
+    value?: number,
+  ) => {
+    handleChangeVolume(value || hoveredProgress);
+  };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (
+    e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>,
+  ) => {
     !isShowHoveredProgress && setIsShowHoveredProgress(true);
     const { width, left } = e.currentTarget.getBoundingClientRect();
-    const x: number = e.clientX - left;
+
+    console.log('e', e);
+    // @ts-ignore
+    const x: number = e.pageX - left;
 
     let position: number = x / width + 0.0016612317725958285; // 0.0001912317725958285
 
@@ -110,22 +113,28 @@ const Progress: React.FC<ProgressProps> = ({
     }
 
     setHoveredProgress(position);
+
+    if (isChanging) {
+      handleChange(undefined, position);
+    }
   };
 
   const handleMouseLeave = () => {
     setHoveredProgress(0);
     setIsShowHoveredProgress(false);
+    setIsChanging(false);
   };
 
   return (
     <ProgressContainer
-      value={width}
-      onClick={handleClick}
+      onClick={handleChange}
+      onMouseDown={() => setIsChanging(true)}
+      onMouseUp={() => setIsChanging(false)}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onMouseUp={handleClick}
+      onTouchMove={handleMouseMove}
     >
-      {loadedProgress && <LoadedProgress value={loadedProgress} />}
+      {!!loadedProgress && <LoadedProgress value={loadedProgress} />}
 
       <CurrentProgress value={hoveredProgress || currentProgress} />
 

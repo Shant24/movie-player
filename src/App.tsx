@@ -33,6 +33,7 @@ const Title = styled.h1`
 const App: React.FC = () => {
   const [videoLink, setVideoLink] = useState<string>('');
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  const [error, setError] = useState<string | null>(null);
 
   const onResize = () => setWindowHeight(window.innerHeight);
 
@@ -49,7 +50,9 @@ const App: React.FC = () => {
 
       <InputField setVideoLink={setVideoLink} />
 
-      {videoLink && <Player src={videoLink} />}
+      {error}
+
+      {videoLink && <Player src={videoLink} setError={setError} />}
     </MoviePlayerContainer>
   );
 };
