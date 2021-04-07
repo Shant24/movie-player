@@ -45,13 +45,13 @@ const Video: React.FC<VideoProps> = ({
         height="100%"
         url={src}
         pip={isPip}
-        loop={true}
-        volume={volume}
-        muted={isMuted}
-        playing={isPlaying}
-        playsinline={false}
-        progressInterval={500}
+        loop={false}
         controls={false}
+        playsinline={false}
+        muted={isMuted}
+        volume={volume}
+        playing={isPlaying}
+        progressInterval={500}
         onError={(e) => console.log('onError', e)}
         onDuration={(duration: number) => setDuration(duration)}
         onProgress={(progress: IProgress) => setProgress(progress)}
