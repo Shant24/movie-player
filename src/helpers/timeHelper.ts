@@ -1,11 +1,11 @@
-const floor = (time: number) => `0${Math.floor(time)}`.slice(-2);
+const sz = (time: number) => `0${time}`.slice(-2);
 
-export const formatTime = (seconds: number) => {
+export const formatTime = (seconds: number): string => {
   const date = new Date(seconds * 1000);
 
-  const hh = floor(date.getUTCHours());
-  const mm = floor(date.getUTCMinutes());
-  const ss = floor(date.getUTCSeconds());
+  const hh = Math.floor(date.getUTCHours());
+  const mm = Math.floor(date.getUTCMinutes());
+  const ss = sz(Math.floor(date.getUTCSeconds()));
 
-  return hh !== '00' ? `${hh}:${mm}:${ss}` : `${mm}:${ss}`;
+  return hh !== 0 ? `${hh}:${sz(mm)}:${ss}` : `${mm}:${ss}`;
 };
