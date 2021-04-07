@@ -177,7 +177,7 @@ interface InputFieldProps {
 
 const InputField: React.FC<InputFieldProps> = ({ setVideoLink }) => {
   const [link, setLink] = useState<string>(
-    'https://nickel.cloud.cdnland.in/movies/6313dba955fd4f750105d2fbbc521c4a4cbf91bc/e04d88d9455a7f31649d64472415b320:2021040801/1080.mp4',
+    'https://oxygen.cloud.cdnland.in/movies/43a3b97c1370859ea397a2e8ad89c9703cca8841/d693a99d434b359d01453e4c042acd69:2021040821/480.mp4',
   );
   const [quality, setQuality] = useState<IQuality | null>(
     qualityOptions[qualityOptions.length - 1],

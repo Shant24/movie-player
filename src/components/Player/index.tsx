@@ -3,8 +3,8 @@ import styled from 'styled-components/macro';
 import ReactPlayer from 'react-player';
 
 import { IProgress } from '../../types/player';
-import Video from '../Video';
-import VideoControllers from '../VideoControllers';
+import Video from './components/Video';
+import VideoControllers from './components/VideoControllers';
 import screenfull from 'screenfull';
 
 type PlayerContainerProps = {
@@ -13,6 +13,10 @@ type PlayerContainerProps = {
 
 const PlayerContainer = styled.div<PlayerContainerProps>`
   background-color: black;
+
+  & > * {
+    user-select: none;
+  }
 
   ${({ isFullMode }) =>
     isFullMode
@@ -44,18 +48,20 @@ interface PlayerProps {
 }
 
 const Player: React.FC<PlayerProps> = ({ src, setError }) => {
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [isPip, setIsPip] = useState<boolean>(false);
   const [progress, setProgress] = useState<IProgress>({
     playedSeconds: 0,
     played: 0,
     loadedSeconds: 0,
     loaded: 0,
   });
-  const [duration, setDuration] = useState<number>(0);
   const [volume, setVolume] = useState<number>(1);
+  const [duration, setDuration] = useState<number>(0);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [isFullMode, setIsFullMode] = useState<boolean>(false);
+  const [isPip, setIsPip] = useState<boolean>(false);
+
+  const VideoRef = useRef() as React.RefObject<ReactPlayer> | undefined;
 
   useEffect(() => {
     if (screenfull.isEnabled) {
@@ -69,8 +75,6 @@ const Player: React.FC<PlayerProps> = ({ src, setError }) => {
       });
     }
   }, []);
-
-  const VideoRef = useRef() as React.RefObject<ReactPlayer> | undefined;
 
   return (
     <PlayerContainer isFullMode={isFullMode}>
