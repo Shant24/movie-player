@@ -1,6 +1,6 @@
 # Demo
 
-[http://movie-player.shant-sargsyan.me](http://movie-player.shant-sargsyan.me)
+[https://movie-player.shant-dev.com](https://movie-player.shant-dev.com)
 
 # Getting Started with Create React App
 
